@@ -9,11 +9,10 @@ BRANCH="${1:-main}"
 
 echo "🚀 开始同步推送到 GitHub 和 Gitee (${BRANCH})..."
 
-# 确保双推送 URL 已配置
-git remote set-url --add --push origin git@github.com:beyondcy1013/zcode-fresh-reset.git 2>/dev/null || true
-git remote set-url --add --push origin git@gitee.com:beyondcy1013/zcode-fresh-reset.git 2>/dev/null || true
+echo "📤 [1/2] 正在推送到 GitHub..."
+git push https://github.com/beyondcy1013/zcode-fresh-reset.git "${BRANCH}"
 
-echo "📤 正在推送到远端仓库..."
-git push origin "${BRANCH}"
+echo "📤 [2/2] 正在推送到 Gitee..."
+git push git@gitee.com:beyondcy1013/zcode-fresh-reset.git "${BRANCH}"
 
-echo "✅ 双平台推送完成！"
+echo "✅ 双平台推送全部完成！"
