@@ -1,3 +1,5 @@
+#![cfg_attr(windows, windows_subsystem = "windows")]
+
 use semver::Version;
 use serde::Deserialize;
 use std::thread;
@@ -11,6 +13,9 @@ use std::{
     process::{Command, ExitCode},
     time::{SystemTime, UNIX_EPOCH},
 };
+
+mod accounts;
+mod gui;
 
 #[derive(Clone, Copy)]
 enum Root {
@@ -88,6 +93,7 @@ const FULL_TAGS: &[&str] = &[
     "updater_id",
 ];
 
+#[derive(Clone)]
 struct Roots {
     user_profile: PathBuf,
     app_data: PathBuf,
@@ -126,7 +132,8 @@ struct CleanOptions {
     backup_dir: Option<PathBuf>,
 }
 enum Action {
-    Interactive,
+    Gui,
+    InteractiveCli,
     Inspect,
     Backup(Option<PathBuf>),
     Clean(CleanOptions),
@@ -164,7 +171,7 @@ fn tr(zh: &str, en: &str) -> String {
 fn parse_args(args: impl IntoIterator<Item = String>) -> Result<Action, String> {
     let mut args = args.into_iter();
     let Some(action) = args.next() else {
-        return Ok(Action::Interactive);
+        return Ok(Action::Gui);
     };
     if ["--help", "-h"].contains(&action.as_str()) {
         return Ok(Action::Help);
@@ -189,6 +196,7 @@ fn parse_args(args: impl IntoIterator<Item = String>) -> Result<Action, String> 
         }
     }
     match action.as_str() {
+        "interactive" => Ok(Action::InteractiveCli),
         "inspect" => Ok(Action::Inspect),
         "backup" => Ok(Action::Backup(options.backup_dir)),
         "clean" => Ok(Action::Clean(options)),
@@ -209,7 +217,9 @@ fn zcode_running() -> bool {
         .unwrap_or(false);
     #[cfg(not(windows))]
     return Command::new("pgrep")
-        .args(["-i", "-f", "zcode"])
+        .args(["-i", "-x", "zcode"])
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
         .status()
         .map(|s| s.success())
         .unwrap_or(false);
@@ -437,6 +447,21 @@ fn copy_path(source: &Path, destination: &Path) -> io::Result<()> {
     Ok(())
 }
 
+fn candidate_by_tag(tag: &str) -> Candidate {
+    *CANDIDATES
+        .iter()
+        .find(|candidate| candidate.tag == tag)
+        .expect("known candidate tag")
+}
+
+fn remove_path(path: &Path) -> io::Result<()> {
+    if path.is_dir() && !path.is_symlink() {
+        fs::remove_dir_all(path)
+    } else {
+        fs::remove_file(path)
+    }
+}
+
 fn backup(roots: &Roots, backup_root: &Path) -> io::Result<PathBuf> {
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -637,13 +662,9 @@ fn interactive() -> Result<(), String> {
     }
 }
 
-fn pause_before_exit() {
-    let _ = read_choice("\n按回车键关闭窗口...");
-}
-
 fn print_help(program: &OsStr) {
     let exe = Path::new(program).display();
-    println!("ZCode Fresh Reset {}\n\nUsage / 用法:\n  {exe} inspect\n  {exe} backup [--backup-dir DIR]\n  {exe} clean [--safe] [--no-backup] [--backup-dir DIR]\n  {exe} --check-update\n\nLanguage / 语言: set ZCODE_LANG=en or zh", env!("CARGO_PKG_VERSION"));
+    println!("ZCode Fresh Reset {}\n\nUsage / 用法:\n  {exe}\n  {exe} interactive\n  {exe} inspect\n  {exe} backup [--backup-dir DIR]\n  {exe} clean [--safe] [--no-backup] [--backup-dir DIR]\n  {exe} --check-update\n\nLanguage / 语言: set ZCODE_LANG=en or zh", env!("CARGO_PKG_VERSION"));
 }
 
 fn run() -> Result<(), String> {
@@ -656,7 +677,8 @@ fn run() -> Result<(), String> {
         })
         .collect::<Result<Vec<_>, _>>()?;
     match parse_args(args)? {
-        Action::Interactive => interactive()?,
+        Action::Gui => gui::launch()?,
+        Action::InteractiveCli => interactive()?,
         Action::Help => print_help(&program),
         Action::Version => println!("zcode-fresh-reset {}", env!("CARGO_PKG_VERSION")),
         Action::CheckUpdate => check_update(),
@@ -673,7 +695,6 @@ fn run() -> Result<(), String> {
 }
 
 fn main() -> ExitCode {
-    let launched_without_arguments = env::args_os().len() == 1;
     let result = match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
@@ -681,9 +702,6 @@ fn main() -> ExitCode {
             ExitCode::FAILURE
         }
     };
-    if launched_without_arguments {
-        pause_before_exit();
-    }
     result
 }
 
@@ -691,11 +709,8 @@ fn main() -> ExitCode {
 mod tests {
     use super::*;
     #[test]
-    fn no_arguments_enters_interactive_mode() {
-        assert!(matches!(
-            parse_args(Vec::new()).unwrap(),
-            Action::Interactive
-        ));
+    fn no_arguments_enters_gui_mode() {
+        assert!(matches!(parse_args(Vec::new()).unwrap(), Action::Gui));
     }
 
     #[test]

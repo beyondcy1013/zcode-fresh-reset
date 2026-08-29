@@ -1,7 +1,7 @@
-# ZCode Fresh Reset & Session Sanitizer (`zcode-fresh-reset`)
+# ZCode 账户管家 (`zcode-fresh-reset`)
 
 <p align="center">
-  <b>⚡ 一键安全清理 ZCode 客户端本地登录状态、Cookie 会话与套餐权益缓存，快速还原纯净新机环境 ⚡</b>
+  <b>一个界面管理多个 ZCode 账户：一键备份、快速切换、安全清理，本地状态始终可控。</b>
 </p>
 
 <p align="center">
@@ -19,7 +19,22 @@
 - **无法弹出新用户免费 Flash 套餐引导**：老账号登录过的机器残留了本地权益缓存（`coding-plan-cache.json`），即使换了新账号也不会弹出新版免费套餐领取界面。
 - **环境残留与排错困难**：本地缓存损坏导致客户端无法拉取最新 Plan 或报错。
 
-**`zcode-fresh-reset`** 提供了针对 ZCode 客户端的一键本地重置与备份方案，精准清理相关凭据、网页会话、设备缓存与套餐信息，让客户端秒回“刚下载新机”的纯净状态。
+**`zcode-fresh-reset`** 是一个原生 Windows 图形化账户管理工具。它可以为每个已登录账户保存独立的本地状态快照，在多个账户之间快速切换，同时保留原有的一键重置与安全清理能力。
+
+## 账户备份与切换
+
+双击 `zcode-fresh-reset.exe` 即进入 GUI，无需命令行：
+
+1. 登录一个 ZCode 账户并完全退出 ZCode。
+2. 输入容易识别的账户名称，点击 **保存当前账户**。
+3. 登录并保存其他账户，列表会集中展示所有账户快照。
+4. 以后退出 ZCode，在列表中点击 **切换**，再重新启动 ZCode 即可。
+
+切换前，工具会自动更新当前账户快照并创建安全备份；目标账户恢复失败时会自动回滚。账户凭据不会显示在界面中，快照保存在 `%USERPROFILE%\.zcode\account_backups\`。
+
+> 账户快照包含登录凭据和 Cookie，请像保护密码一样保护备份目录，不要上传或分享。
+
+![ZCode 账户管家 GUI](docs/zcode-account-manager.png)
 
 ---
 
@@ -58,14 +73,14 @@
 
 发布文件 `zcode-fresh-reset.exe` 不需要 Python 或其他运行时。
 
-直接双击 EXE 会进入交互模式：显示运行和检测步骤，选择清理模式后逐行显示备份及清除的每个文件，完成后等待按回车关闭窗口。
+直接双击 EXE 会打开 **ZCode 账户管家**。账户页用于备份、更新、切换和删除账户快照；清理页提供安全清理和完整重置。所有会改动本地状态的操作都有明确状态反馈和二次确认。
 
 ## 多语言与自动更新
 
-默认显示中文；设置环境变量 `ZCODE_LANG=en` 后显示英文交互文本。程序内置 GitHub Release 更新地址，双击启动时自动检查，也可运行 `zcode-fresh-reset.exe --check-update` 手动检查；`ZCODE_UPDATE_MANIFEST_URL` 可覆盖默认地址。清单格式：
+命令行兼容模式仍保留；设置环境变量 `ZCODE_LANG=en` 后显示英文交互文本。程序内置 GitHub Release 更新地址，可运行 `zcode-fresh-reset.exe --check-update` 手动检查；`ZCODE_UPDATE_MANIFEST_URL` 可覆盖默认地址。清单格式：
 
 ```json
-{"version":"0.3.0","url":"https://github.com/beyondcy1013/zcode-fresh-reset/releases/latest/download/zcode-fresh-reset-0.3.0.exe"}
+{"version":"0.4.0","url":"https://github.com/beyondcy1013/zcode-fresh-reset/releases/latest/download/zcode-fresh-reset-0.4.0.exe"}
 ```
 
 ## 清理效果示例
@@ -74,28 +89,33 @@
 
 ![清理后同一台电脑重新出现领取入口](docs/zcode-claim-after-reset.png)
 
-### 1. 查看当前状态
+### 1. 打开图形界面
+```bash
+zcode-fresh-reset.exe
+```
+
+### 2. 查看当前状态
 ```bash
 zcode-fresh-reset.exe inspect
 ```
 
-### 2. 一键完整重置（推荐）
+### 3. 一键完整重置
 > ⚠️ **注意**：执行前请确保已**完全退出 ZCode 客户端**。默认会自动在 `%USERPROFILE%\.zcode\reset_backups\` 下建立完整备份。
 ```bash
 zcode-fresh-reset.exe clean
 ```
 
-### 3. 安全模式（仅清理套餐缓存，不影响当前登录凭据）
+### 4. 安全模式（仅清理套餐缓存，不影响当前登录凭据）
 ```bash
 zcode-fresh-reset.exe clean --safe
 ```
 
-### 4. 仅备份配置
+### 5. 仅备份配置
 ```bash
 zcode-fresh-reset.exe backup
 ```
 
-### 5. 从源码构建
+### 6. 从源码构建
 ```bash
 cargo test
 cargo build --release
