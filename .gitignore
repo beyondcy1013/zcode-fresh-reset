@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Backups
+*.bak
+*backup*
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
