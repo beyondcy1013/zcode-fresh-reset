@@ -34,7 +34,7 @@
 - **云端有记录**：同一个账号在服务端已被标记为“已领过”或“老用户”。
 
 ### 3. 正确的“新用户领取”操作流程
-1. 运行本工具执行 **`python3 zcode_reset.py clean`**，彻底清理本地老账号状态。
+1. 完全退出 ZCode，运行 **`zcode-fresh-reset.exe clean`**，彻底清理本地老账号状态。
 2. 启动 ZCode 客户端，此时客户端处于纯净新机状态。
 3. 登录**未领取过该福利的新账号**，客户端将正常触发新用户新手引导并成功领取免费 Flash 套餐。
 
@@ -42,46 +42,66 @@
 
 ## 📂 涉及的关键路径清单
 
-| 类别 | 路径 (Linux / macOS / Windows) | 作用说明 |
+| 类别 | Windows 路径 | 作用说明 |
 | :--- | :--- | :--- |
-| **登录凭据** | `~/.zcode/v2/credentials.json` | 用户登录 Token 与授权身份 |
-| **套餐缓存** | `~/.zcode/v2/coding-plan-cache.json` | 缓存的 Plan 权益与领取状态 |
-| **遥测埋点** | `~/.zcode/v2/telemetry-state.json` | 本地客户端状态数据 |
-| **网页会话** | `~/.config/ZCode/session/Cookies` | Electron 登录态 Cookie |
-| **页面存储** | `~/.config/ZCode/session/Local Storage/` | 前端页面持久化数据 |
-| **设备特征** | `~/.config/ZCode/rum-electron-store/` | 客户端设备监控与特征信息 |
-| **升级标记** | `~/.config/ZCode/.updaterId` | 客户端更新器标识 |
+| **登录凭据** | `%USERPROFILE%\.zcode\v2\credentials.json` | 用户登录 Token 与授权身份 |
+| **套餐缓存** | `%USERPROFILE%\.zcode\v2\coding-plan-cache.json` | 缓存的 Plan 权益与领取状态 |
+| **遥测埋点** | `%USERPROFILE%\.zcode\v2\telemetry-state.json` | 本地客户端状态数据 |
+| **网页会话** | `%APPDATA%\ZCode\session\Cookies` | Electron 登录态 Cookie |
+| **页面存储** | `%APPDATA%\ZCode\session\Local Storage\` | 前端页面持久化数据 |
+| **设备特征** | `%APPDATA%\ZCode\rum-electron-store\` | 客户端设备监控与特征信息 |
+| **升级标记** | `%APPDATA%\ZCode\.updaterId` | 客户端更新器标识 |
 
 ---
 
 ## 🚀 快速上手 (Quick Start)
 
-### 1. 克隆项目
-```bash
-git clone https://github.com/beyondcy1013/zcode-fresh-reset.git
-cd zcode-fresh-reset
+发布文件 `zcode-fresh-reset.exe` 不需要 Python 或其他运行时。
+
+直接双击 EXE 会进入交互模式：显示运行和检测步骤，选择清理模式后逐行显示备份及清除的每个文件，完成后等待按回车关闭窗口。
+
+## 多语言与自动更新
+
+默认显示中文；设置环境变量 `ZCODE_LANG=en` 后显示英文交互文本。程序内置 GitHub Release 更新地址，双击启动时自动检查，也可运行 `zcode-fresh-reset.exe --check-update` 手动检查；`ZCODE_UPDATE_MANIFEST_URL` 可覆盖默认地址。清单格式：
+
+```json
+{"version":"0.3.0","url":"https://github.com/beyondcy1013/zcode-fresh-reset/releases/latest/download/zcode-fresh-reset-0.3.0.exe"}
 ```
 
-### 2. 查看当前状态
+## 清理效果示例
+
+下图为清理前的 ZCode 套餐界面示例。清理本机登录态、会话和权益缓存后，重新登录符合条件的新账号时，客户端会重新执行首次启动权益检测；最终资格仍由 ZCode 服务端账号策略决定。
+
+![清理后同一台电脑重新出现领取入口](docs/zcode-claim-after-reset.png)
+
+### 1. 查看当前状态
 ```bash
-python3 zcode_reset.py inspect
+zcode-fresh-reset.exe inspect
 ```
 
-### 3. 一键完整重置（推荐）
-> ⚠️ **注意**：执行前请确保已**完全退出 ZCode 客户端**。默认会自动在 `~/.zcode/reset_backups/` 下建立完整备份，安全无忧。
+### 2. 一键完整重置（推荐）
+> ⚠️ **注意**：执行前请确保已**完全退出 ZCode 客户端**。默认会自动在 `%USERPROFILE%\.zcode\reset_backups\` 下建立完整备份。
 ```bash
-python3 zcode_reset.py clean
+zcode-fresh-reset.exe clean
 ```
 
-### 4. 安全模式（仅清理套餐缓存，不影响当前登录凭据）
+### 3. 安全模式（仅清理套餐缓存，不影响当前登录凭据）
 ```bash
-python3 zcode_reset.py clean --safe
+zcode-fresh-reset.exe clean --safe
 ```
 
-### 5. 仅备份配置
+### 4. 仅备份配置
 ```bash
-python3 zcode_reset.py backup
+zcode-fresh-reset.exe backup
 ```
+
+### 5. 从源码构建
+```bash
+cargo test
+cargo build --release
+```
+
+生成文件位于 `target\release\zcode-fresh-reset.exe`。仓库中的 GitHub Actions 也会在推送 `v*` 标签时构建 Windows x86_64 EXE。
 
 ---
 

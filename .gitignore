@@ -8,6 +8,9 @@ env/
 venv/
 .venv/
 
+# Rust
+target/
+
 # Backups
 *.bak
 *backup*
@@ -16,3 +19,4 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+.webclx-paste/
