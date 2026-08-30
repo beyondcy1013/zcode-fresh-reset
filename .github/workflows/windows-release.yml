@@ -15,8 +15,8 @@ jobs:
         shell: pwsh
         run: |
           $version = (Get-Content Cargo.toml | Select-String '^version').ToString().Split('"')[1]
-          $asset = "zcode-fresh-reset-$version.exe"
-          Copy-Item target/release/zcode-fresh-reset.exe $asset
+          $asset = "zcode-account-manager-$version.exe"
+          Copy-Item target/release/zcode-account-manager.exe $asset
           $sha256 = (Get-FileHash $asset -Algorithm SHA256).Hash.ToLower()
           @{ version = $version; url = "https://github.com/${{ github.repository }}/releases/download/v$version/$asset"; sha256 = $sha256 } | ConvertTo-Json | Out-File update-manifest.json -Encoding utf8
       - uses: softprops/action-gh-release@v2
@@ -24,10 +24,10 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            zcode-fresh-reset-*.exe
+            zcode-account-manager-*.exe
             update-manifest.json
             docs/zcode-claim-after-reset.png
       - uses: actions/upload-artifact@v4
         with:
-          name: zcode-fresh-reset-windows-x86_64
-          path: zcode-fresh-reset-*.exe
+          name: zcode-account-manager-windows-x86_64
+          path: zcode-account-manager-*.exe

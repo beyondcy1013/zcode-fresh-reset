@@ -232,7 +232,7 @@ struct UpdateManifest {
     sha256: Option<String>,
 }
 
-const DEFAULT_UPDATE_MANIFEST_URL: &str = "https://github.com/beyondcy1013/zcode-fresh-reset/releases/latest/download/update-manifest.json";
+const DEFAULT_UPDATE_MANIFEST_URL: &str = "https://github.com/beyondcy1013/zcode-account-manager/releases/latest/download/update-manifest.json";
 
 fn fetch_update() -> Result<Option<UpdateManifest>, String> {
     let url = env::var_os("ZCODE_UPDATE_MANIFEST_URL")
@@ -581,7 +581,7 @@ fn read_choice(prompt: &str) -> Result<String, String> {
 
 fn interactive() -> Result<(), String> {
     let roots = Roots::detect()?;
-    println!("ZCode Fresh Reset {}", env!("CARGO_PKG_VERSION"));
+    println!("ZCode Account Manager {}", env!("CARGO_PKG_VERSION"));
     {
         match fetch_update() {
             Ok(Some(update)) => {
@@ -664,12 +664,14 @@ fn interactive() -> Result<(), String> {
 
 fn print_help(program: &OsStr) {
     let exe = Path::new(program).display();
-    println!("ZCode Fresh Reset {}\n\nUsage / 用法:\n  {exe}\n  {exe} interactive\n  {exe} inspect\n  {exe} backup [--backup-dir DIR]\n  {exe} clean [--safe] [--no-backup] [--backup-dir DIR]\n  {exe} --check-update\n\nLanguage / 语言: set ZCODE_LANG=en or zh", env!("CARGO_PKG_VERSION"));
+    println!("ZCode Account Manager {}\n\nUsage / 用法:\n  {exe}\n  {exe} interactive\n  {exe} inspect\n  {exe} backup [--backup-dir DIR]\n  {exe} clean [--safe] [--no-backup] [--backup-dir DIR]\n  {exe} --check-update\n\nLanguage / 语言: set ZCODE_LANG=en or zh", env!("CARGO_PKG_VERSION"));
 }
 
 fn run() -> Result<(), String> {
     let mut raw = env::args_os();
-    let program = raw.next().unwrap_or_else(|| "zcode-fresh-reset.exe".into());
+    let program = raw
+        .next()
+        .unwrap_or_else(|| "zcode-account-manager.exe".into());
     let args = raw
         .map(|arg| {
             arg.into_string()
@@ -680,7 +682,7 @@ fn run() -> Result<(), String> {
         Action::Gui => gui::launch()?,
         Action::InteractiveCli => interactive()?,
         Action::Help => print_help(&program),
-        Action::Version => println!("zcode-fresh-reset {}", env!("CARGO_PKG_VERSION")),
+        Action::Version => println!("zcode-account-manager {}", env!("CARGO_PKG_VERSION")),
         Action::CheckUpdate => check_update(),
         Action::Inspect => inspect(&Roots::detect()?).map_err(|e| e.to_string())?,
         Action::Backup(dir) => {

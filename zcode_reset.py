@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ZCode Fresh Reset & Session Sanitizer
+ZCode Account Manager
 ====================================
 安全清理 ZCode 客户端本地登录状态、会话与套餐权益缓存，
 重置客户端为“新机首次启动”状态，方便接入新账号或重新拉取权益。
@@ -149,7 +149,7 @@ def clean_state(safe_mode: bool = False, no_backup: bool = False, backup_path: s
 
 def main():
     parser = argparse.ArgumentParser(
-        description="ZCode Fresh Reset & Session Sanitizer - 重置 ZCode 客户端本地状态工具"
+        description="ZCode Account Manager - ZCode 账户备份、切换与本地状态管理工具"
     )
     subparsers = parser.add_subparsers(dest="action", help="执行操作")
     

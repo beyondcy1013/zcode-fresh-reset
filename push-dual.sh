@@ -10,9 +10,9 @@ BRANCH="${1:-main}"
 echo "🚀 开始同步推送到 GitHub 和 Gitee (${BRANCH})..."
 
 echo "📤 [1/2] 正在推送到 GitHub..."
-git push https://github.com/beyondcy1013/zcode-fresh-reset.git "${BRANCH}"
+git push https://github.com/beyondcy1013/zcode-account-manager.git "${BRANCH}"
 
 echo "📤 [2/2] 正在推送到 Gitee..."
-git push git@gitee.com:beyondcy1013/zcode-fresh-reset.git "${BRANCH}"
+git push git@gitee.com:beyondcy1013/zcode-account-manager.git "${BRANCH}"
 
 echo "✅ 双平台推送全部完成！"

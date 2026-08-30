@@ -1,13 +1,13 @@
-# ZCode 账户管家 (`zcode-fresh-reset`)
+# ZCode 账户管家 (`zcode-account-manager`)
 
 <p align="center">
   <b>一个界面管理多个 ZCode 账户：一键备份、快速切换、安全清理，本地状态始终可控。</b>
 </p>
 
 <p align="center">
-  <a href="https://github.com/beyondcy1013/zcode-fresh-reset/stargazers"><img src="https://img.shields.io/github/stars/beyondcy1013/zcode-fresh-reset" alt="Stars Badge"/></a>
-  <a href="https://github.com/beyondcy1013/zcode-fresh-reset/issues"><img src="https://img.shields.io/github/issues/beyondcy1013/zcode-fresh-reset" alt="Issues Badge"/></a>
-  <a href="https://github.com/beyondcy1013/zcode-fresh-reset/blob/main/LICENSE"><img src="https://img.shields.io/github/license/beyondcy1013/zcode-fresh-reset" alt="License Badge"/></a>
+  <a href="https://github.com/beyondcy1013/zcode-account-manager/stargazers"><img src="https://img.shields.io/github/stars/beyondcy1013/zcode-account-manager" alt="Stars Badge"/></a>
+  <a href="https://github.com/beyondcy1013/zcode-account-manager/issues"><img src="https://img.shields.io/github/issues/beyondcy1013/zcode-account-manager" alt="Issues Badge"/></a>
+  <a href="https://github.com/beyondcy1013/zcode-account-manager/blob/main/LICENSE"><img src="https://img.shields.io/github/license/beyondcy1013/zcode-account-manager" alt="License Badge"/></a>
 </p>
 
 ---
@@ -19,11 +19,11 @@
 - **无法弹出新用户免费 Flash 套餐引导**：老账号登录过的机器残留了本地权益缓存（`coding-plan-cache.json`），即使换了新账号也不会弹出新版免费套餐领取界面。
 - **环境残留与排错困难**：本地缓存损坏导致客户端无法拉取最新 Plan 或报错。
 
-**`zcode-fresh-reset`** 是一个原生 Windows 图形化账户管理工具。它可以为每个已登录账户保存独立的本地状态快照，在多个账户之间快速切换，同时保留原有的一键重置与安全清理能力。
+**`zcode-account-manager`**（原 `zcode-fresh-reset`）是一个原生 Windows 图形化账户管理工具。它可以为每个已登录账户保存独立的本地状态快照，在多个账户之间快速切换，同时保留原有的一键重置与安全清理能力。
 
 ## 账户备份与切换
 
-双击 `zcode-fresh-reset.exe` 即进入 GUI，无需命令行：
+双击 `zcode-account-manager.exe` 即进入 GUI，无需命令行：
 
 1. 登录一个 ZCode 账户并完全退出 ZCode。
 2. 输入容易识别的账户名称，点击 **保存当前账户**。
@@ -49,7 +49,7 @@
 - **云端有记录**：同一个账号在服务端已被标记为“已领过”或“老用户”。
 
 ### 3. 正确的“新用户领取”操作流程
-1. 完全退出 ZCode，运行 **`zcode-fresh-reset.exe clean`**，彻底清理本地老账号状态。
+1. 完全退出 ZCode，运行 **`zcode-account-manager.exe clean`**，彻底清理本地老账号状态。
 2. 启动 ZCode 客户端，此时客户端处于纯净新机状态。
 3. 登录**未领取过该福利的新账号**，客户端将正常触发新用户新手引导并成功领取免费 Flash 套餐。
 
@@ -71,16 +71,16 @@
 
 ## 🚀 快速上手 (Quick Start)
 
-发布文件 `zcode-fresh-reset.exe` 不需要 Python 或其他运行时。
+发布文件 `zcode-account-manager.exe` 不需要 Python 或其他运行时。
 
 直接双击 EXE 会打开 **ZCode 账户管家**。账户页用于备份、更新、切换和删除账户快照；清理页提供安全清理和完整重置。所有会改动本地状态的操作都有明确状态反馈和二次确认。
 
 ## 多语言与自动更新
 
-命令行兼容模式仍保留；设置环境变量 `ZCODE_LANG=en` 后显示英文交互文本。程序内置 GitHub Release 更新地址，可运行 `zcode-fresh-reset.exe --check-update` 手动检查；`ZCODE_UPDATE_MANIFEST_URL` 可覆盖默认地址。清单格式：
+命令行兼容模式仍保留；设置环境变量 `ZCODE_LANG=en` 后显示英文交互文本。程序内置 GitHub Release 更新地址，可运行 `zcode-account-manager.exe --check-update` 手动检查；`ZCODE_UPDATE_MANIFEST_URL` 可覆盖默认地址。清单格式：
 
 ```json
-{"version":"0.4.0","url":"https://github.com/beyondcy1013/zcode-fresh-reset/releases/latest/download/zcode-fresh-reset-0.4.0.exe"}
+{"version":"0.5.0","url":"https://github.com/beyondcy1013/zcode-account-manager/releases/latest/download/zcode-account-manager-0.5.0.exe"}
 ```
 
 ## 清理效果示例
@@ -91,28 +91,28 @@
 
 ### 1. 打开图形界面
 ```bash
-zcode-fresh-reset.exe
+zcode-account-manager.exe
 ```
 
 ### 2. 查看当前状态
 ```bash
-zcode-fresh-reset.exe inspect
+zcode-account-manager.exe inspect
 ```
 
 ### 3. 一键完整重置
 > ⚠️ **注意**：执行前请确保已**完全退出 ZCode 客户端**。默认会自动在 `%USERPROFILE%\.zcode\reset_backups\` 下建立完整备份。
 ```bash
-zcode-fresh-reset.exe clean
+zcode-account-manager.exe clean
 ```
 
 ### 4. 安全模式（仅清理套餐缓存，不影响当前登录凭据）
 ```bash
-zcode-fresh-reset.exe clean --safe
+zcode-account-manager.exe clean --safe
 ```
 
 ### 5. 仅备份配置
 ```bash
-zcode-fresh-reset.exe backup
+zcode-account-manager.exe backup
 ```
 
 ### 6. 从源码构建
@@ -121,7 +121,7 @@ cargo test
 cargo build --release
 ```
 
-生成文件位于 `target\release\zcode-fresh-reset.exe`。仓库中的 GitHub Actions 也会在推送 `v*` 标签时构建 Windows x86_64 EXE。
+生成文件位于 `target\release\zcode-account-manager.exe`。仓库中的 GitHub Actions 也会在推送 `v*` 标签时构建 Windows x86_64 EXE。
 
 ---
 
@@ -129,9 +129,9 @@ cargo build --release
 
 如果您在使用过程中遇到任何问题，或者有功能建议，欢迎联系与交流：
 
-- **GitHub Issues**: [提交 Issue](https://github.com/beyondcy1013/zcode-fresh-reset/issues)
+- **GitHub Issues**: [提交 Issue](https://github.com/beyondcy1013/zcode-account-manager/issues)
 - **GitHub 主页**: [@beyondcy1013](https://github.com/beyondcy1013)
-- **项目仓库**: [https://github.com/beyondcy1013/zcode-fresh-reset](https://github.com/beyondcy1013/zcode-fresh-reset)
+- **项目仓库**: [https://github.com/beyondcy1013/zcode-account-manager](https://github.com/beyondcy1013/zcode-account-manager)
 
 🌟 如果这个项目对你有帮助，欢迎在 GitHub 点个 **Star** 支持一下！
 
